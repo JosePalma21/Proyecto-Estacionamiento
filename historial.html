@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Ingreso y Salida de Vehículos</title>
+    <link rel="stylesheet" href="historial.css">
+</head>
+<body>
+    <div class="container">
+        <img src="/Apli.web1/Proyecto/img/ULEAM.png" alt="Logo ULEAM Estacionamiento" class="logo-img">
+        <h1>Historial de ingreso y salida de vehículos</h1>
+
+        <div class="search-section">
+            <label for="input-placa">Ingrese la placa del vehículo:</label>
+            <input type="text" id="input-placa" placeholder="Ej: ABC123" maxlength="7">
+            <button id="btn-buscar">Buscar</button>
+            <div id="error-message" class="error-message"></div>
+        </div>
+
+        <div class="history-container">
+            <div class="historial-ingreso">
+                <h2>Historial de Ingreso</h2>
+                <ul id="lista-ingresos"></ul>
+            </div>
+            <div class="historial-salida">
+                <h2>Historial de Salida</h2>
+                <ul id="lista-salidas"></ul>
+            </div>
+        </div>
+
+
+        <div id="resultado-busqueda" class="resultado-busqueda"></div>
+
+    </div>
+
+    <script>
+        const historialIngresos = [
+            { placa: 'ABC123', fechaIngreso: '2024-10-07', horaIngreso: '08:30 AM' },
+            { placa: 'XYZ789', fechaIngreso: '2024-10-07', horaIngreso: '09:15 AM' },
+            { placa: 'DEF456', fechaIngreso: '2024-10-07', horaIngreso: '10:00 AM' }
+        ];
+
+        const historialSalidas = [
+            { placa: 'ABC123', fechaSalida: '2024-10-07', horaSalida: '11:30 AM' },
+            { placa: 'DEF456', fechaSalida: '2024-10-07', horaSalida: '01:00 PM' }
+        ];
+
+
+        const inputPlaca = document.getElementById('input-placa');
+        const listaIngresos = document.getElementById('lista-ingresos');
+        const listaSalidas = document.getElementById('lista-salidas');
+        const resultadoBusqueda = document.getElementById('resultado-busqueda');
+        const errorMessage = document.getElementById('error-message');
+
+   
+        function cargarHistorial() {
+            listaIngresos.innerHTML = '';
+            listaSalidas.innerHTML = '';
+
+            historialIngresos.slice().reverse().forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `Placa: ${item.placa} - Fecha: ${item.fechaIngreso} - Hora: ${item.horaIngreso}`;
+                listaIngresos.insertBefore(li, listaIngresos.firstChild);
+            });
+
+            historialSalidas.slice().reverse().forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `Placa: ${item.placa} - Fecha: ${item.fechaSalida} - Hora: ${item.horaSalida}`;
+                listaSalidas.insertBefore(li, listaSalidas.firstChild);
+            });
+        }
+
+        function buscarVehiculo() {
+            const placa = inputPlaca.value.trim().toUpperCase();
+            if (placa === '') {
+                errorMessage.textContent = 'Por favor, ingrese una placa.';
+                resultadoBusqueda.innerHTML = '';
+                return;
+            }
+
+            errorMessage.textContent = '';
+
+            const vehiculoIngreso = historialIngresos.find(item => item.placa === placa);
+
+            const vehiculoSalida = historialSalidas.find(item => item.placa === placa);
+
+            if (vehiculoIngreso) {
+                let resultado = `Vehículo con placa ${vehiculoIngreso.placa} ingresó el ${vehiculoIngreso.fechaIngreso} a las ${vehiculoIngreso.horaIngreso}.`;
+
+                if (vehiculoSalida) {
+                    resultado += ` Salió el ${vehiculoSalida.fechaSalida} a las ${vehiculoSalida.horaSalida}.`;
+                } else {
+                    resultado += ` No ha registrado salida.`;
+                }
+
+                resultadoBusqueda.textContent = resultado;
+            } else {
+                resultadoBusqueda.textContent = `No se encontró información del vehículo con placa ${placa}.`;
+            }
+        }
+        
+        document.getElementById('btn-buscar').addEventListener('click', buscarVehiculo);
+
+        window.onload = cargarHistorial;
+    </script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="gestion-usuario.css">
+    <title>Gestión de Usuario</title>
+</head>
+<body>
+    <div class="container">
+        <img src="/Apli.web1/Proyecto/img/ULEAM.png" alt="Logo ULEAM Estacionamiento" class="logo-img">
+        <h1>Gestión de usuario</h1>
+        <form id="userForm" onsubmit="agregarActualizarUsuario(event)">
+            <label for="codigo">Código de Usuario:</label>
+            <input type="text" id="codigo" name="codigo" required>
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="cedula">Cédula:</label>
+            <input type="text" id="cedula" name="cedula" required>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono" required>
+
+            <label for="edad">Edad:</label>
+            <input type="number" id="edad" name="edad" required>
+
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" required>
+
+            <label for="periodo">Periodo:</label>
+            <select id="periodo" name="periodo" required>
+                <option value="matutino">Matutino</option>
+                <option value="vespertino">Vespertino</option>
+                <option value="nocturno">Nocturno</option>
+            </select>
+
+            <label for="tipo">Tipo de Usuario:</label>
+            <select id="tipo" name="tipo" required>
+                <option value="administrador">Administrador</option>
+                <option value="operador">Operador</option>
+                <option value="otro">Otro</option>
+            </select>
+
+            <button type="submit">Registrar Usuario</button>
+        </form>
+        <br>
+        <h2>Búsqueda de usuario</h2>
+        <input type="text" id="codigoBuscar" placeholder="Ingrese código de usuario">
+        <button onclick="buscarModificarUsuario()">Modificar Usuario</button>
+        <button onclick="buscarEliminarUsuario()">Eliminar Usuario</button>
+
+        <button id="botonActualizar" style="display:none;" onclick="agregarActualizarUsuario(event)">Actualizar Usuario</button>
+        <button id="botonEliminar" style="display:none;" onclick="eliminarUsuario()">Eliminar Usuario</button>
+        <button id="botonRegresar" style="display:none;" onclick="limpiarFormulario()">Regresar</button>
+        <br>
+        <h2>Lista de usuarios registrados</h2>
+        <button onclick="mostrarUsuarios()">Mostrar Usuarios</button>
+
+        <div id="tablaUsuariosContainer" style="display:none;">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Cédula</th>
+                        <th>Teléfono</th>
+                        <th>Edad</th>
+                        <th>Dirección</th>
+                        <th>Periodo</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaUsuarios">
+                    <!-- Usuarios registrados se mostrarán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // Array para almacenar los usuarios
+        let usuarios = [];
+
+        // Función para agregar o actualizar un usuario
+        function agregarActualizarUsuario(event) {
+            event.preventDefault(); // Evitar el envío del formulario
+
+            const codigo = document.getElementById('codigo').value;
+            const nombre = document.getElementById('nombre').value;
+            const cedula = document.getElementById('cedula').value;
+            const telefono = document.getElementById('telefono').value;
+            const edad = document.getElementById('edad').value;
+            const direccion = document.getElementById('direccion').value;
+            const periodo = document.getElementById('periodo').value;
+            const tipo = document.getElementById('tipo').value;
+
+            // Validaciones de los campos
+            if (!validarCampos(codigo, nombre, cedula, telefono, edad, direccion)) {
+                return; // Salir si hay errores de validación
+            }
+
+            // Verificar si se está actualizando o agregando un nuevo usuario
+            const usuarioExistente = usuarios.find(user => user.codigo === codigo);
+
+            if (usuarioExistente) {
+                // Actualizar usuario
+                Object.assign(usuarioExistente, { nombre, cedula, telefono, edad, direccion, periodo, tipo });
+                alert('Usuario actualizado exitosamente');
+            } else {
+                // Agregar nuevo usuario
+                const nuevoUsuario = { codigo, nombre, cedula, telefono, edad, direccion, periodo, tipo };
+                usuarios.push(nuevoUsuario);
+                alert('Usuario registrado exitosamente');
+            }
+
+            // Limpiar el formulario
+            limpiarFormulario();
+        }
+
+        // Validación de campos
+        function validarCampos(codigo, nombre, cedula, telefono, edad, direccion) {
+            if (!codigo || !nombre || !cedula || !telefono || !edad || !direccion) {
+                alert('Todos los campos son obligatorios');
+                return false;
+            }
+
+            if (isNaN(edad) || edad <= 0) {
+                alert('La edad debe ser un número positivo');
+                return false;
+            }
+
+            // Validación de cédula (solo para propósitos de ejemplo)
+            if (cedula.length < 10) {
+                alert('La cédula debe tener al menos 10 caracteres');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Función para buscar y modificar un usuario
+        function buscarModificarUsuario() {
+            const codigoBuscar = document.getElementById('codigoBuscar').value;
+            const usuario = usuarios.find(user => user.codigo === codigoBuscar);
+
+            if (usuario) {
+                // Cargar los datos del usuario en el formulario
+                document.getElementById('codigo').value = usuario.codigo;
+                document.getElementById('nombre').value = usuario.nombre;
+                document.getElementById('cedula').value = usuario.cedula;
+                document.getElementById('telefono').value = usuario.telefono;
+                document.getElementById('edad').value = usuario.edad;
+                document.getElementById('direccion').value = usuario.direccion;
+                document.getElementById('periodo').value = usuario.periodo;
+                document.getElementById('tipo').value = usuario.tipo;
+
+                // Mostrar el botón de actualización y ocultar el de registrar
+                document.getElementById('botonActualizar').style.display = 'inline-block';
+            } else {
+                alert('Usuario no encontrado');
+            }
+        }
+
+        // Función para eliminar un usuario
+        function buscarEliminarUsuario() {
+            const codigoBuscar = document.getElementById('codigoBuscar').value;
+            const index = usuarios.findIndex(user => user.codigo === codigoBuscar);
+
+            if (index !== -1) {
+                usuarios.splice(index, 1); // Eliminar el usuario
+                alert('Usuario eliminado exitosamente');
+                limpiarFormulario();
+            } else {
+                alert('Usuario no encontrado');
+            }
+        }
+
+        // Función para mostrar usuarios registrados
+        function mostrarUsuarios() {
+            const tablaUsuarios = document.getElementById('tablaUsuarios');
+            tablaUsuarios.innerHTML = ''; // Limpiar la tabla
+
+            usuarios.forEach(usuario => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${usuario.codigo}</td>
+                    <td>${usuario.nombre}</td>
+                    <td>${usuario.cedula}</td>
+                    <td>${usuario.telefono}</td>
+                    <td>${usuario.edad}</td>
+                    <td>${usuario.direccion}</td>
+                    <td>${usuario.periodo}</td>
+                    <td>${usuario.tipo}</td>
+                `;
+                tablaUsuarios.appendChild(row);
+            });
+
+            document.getElementById('tablaUsuariosContainer').style.display = 'block'; // Mostrar la tabla
+        }
+
+        // Función para limpiar el formulario
+        function limpiarFormulario() {
+            document.getElementById('userForm').reset();
+            document.getElementById('botonActualizar').style.display = 'none'; // Ocultar el botón de actualizar
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="config-perfil.css">
+    <title>Configuración de perfil usuario</title>
+</head>
+<body>
+    <div class="container">
+        <img src="/Apli.web1/Proyecto/img/ULEAM.png" alt="Logo ULEAM Estacionamiento" class="logo-img">
+        <h1>Configuración del perfil de usuario</h1>
+        <form id="profileForm">
+            <div class="form-group">
+                <label for="username">Nombre de usuario</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="current-password">Contraseña actual</label>
+                <input type="password" id="current-password" name="current-password" required>
+            </div>
+            <div class="form-group">
+                <label for="new-password">Nueva contraseña</label>
+                <input type="password" id="new-password" name="new-password">
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirmar nueva contraseña</label>
+                <input type="password" id="confirm-password" name="confirm-password">
+            </div>
+            <button type="submit">Guardar Cambios</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        document.getElementById('profileForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const currentPassword = document.getElementById('current-password').value.trim();
+            const newPassword = document.getElementById('new-password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
+            const messageDiv = document.getElementById('message');
+
+            let message = '';
+
+            // Validación del nombre de usuario
+            if (username === '') {
+                message += 'El nombre de usuario no puede estar vacío.<br>';
+            }
+
+            // Validación del correo electrónico
+            const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+            if (!emailPattern.test(email)) {
+                message += 'Correo electrónico no válido.<br>';
+            }
+
+            // Validación de contraseñas
+            if (newPassword !== '' && newPassword !== confirmPassword) {
+                message += 'Las contraseñas no coinciden.<br>';
+            }
+
+            // Si hay errores, mostrarlos; de lo contrario, enviar los datos
+            if (message !== '') {
+                messageDiv.innerHTML = `<div class="error">${message}</div>`;
+            } else {
+                messageDiv.innerHTML = `<div class="success">¡Cambios guardados con éxito!</div>`;
+                // Aquí podrías enviar los datos a un servidor usando AJAX
+            }
+        });
+    </script>
+</body>
+</html>
